@@ -55,3 +55,10 @@ RUN del /q C:\TEMP\*.*
 # Show the current state of the flutter installation after the installation.
 # This should display no errors for the windows desktop environment.
 RUN flutter doctor -v
+
+# Add a powershell script, which will compile a flutter app mounted at C:\src.
+# The built app is copied to the folder build_container within the mounted folder.
+COPY build.ps1 C:\build.ps1
+WORKDIR C:\build
+VOLUME [ "C:\\src" ]
+ENTRYPOINT [ "powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';", "C:\\build.ps1"]
