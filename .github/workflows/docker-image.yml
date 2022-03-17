@@ -3,6 +3,8 @@ name: Docker Image CI
 on:
   push:
     branches: [ main ]
+    tags:
+      - '*'
   pull_request:
     branches: [ main ]
 
@@ -21,8 +23,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Docker Build
+        if: ${{ github.ref_name == 'main' }}
         run: |
                 docker build -f Dockerfile -t tauu/flutter-windows-builder:latest .
+      - name: Docker Build
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+                docker build -f Dockerfile -t tauu/flutter-windows-builder:${{github.ref_name}} .
       - name: Docker Push
+        if: ${{ github.ref_name == 'main' }}
         run: |
                 docker push tauu/flutter-windows-builder:latest
+      - name: Docker Push
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+                docker push tauu/flutter-windows-builder:${{github.ref_name}}
