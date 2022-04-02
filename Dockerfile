@@ -7,6 +7,7 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
 # Defione the version of flutter, which will be installed in the container.
 ARG FLUTTER_VERSION=2.10.3
+ARG PWSH_VERSION=7.2.2
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
@@ -55,6 +56,24 @@ RUN del /q C:\TEMP\*.*
 # Show the current state of the flutter installation after the installation.
 # This should display no errors for the windows desktop environment.
 RUN flutter doctor -v
+
+# Install pwsh. This is the default shell expected by the windows gitlab runner for docker images.
+# If it is not installed, gitlab-runner is not able to use the image.
+# The installation procedure has been copied from the official gitlab-runner-helper image.
+# https://gitlab.com/gitlab-org/gitlab-runner/-/blob/main/dockerfiles/runner-helper/Dockerfile.x86_64_servercore
+#
+# The download is performed using powershell.
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+# TLS1.2 has to enabled to download pwsh installer from GitHub.
+RUN New-Item -ItemType directory -Path C:\Downloads; `
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12; `
+    Invoke-Webrequest "https://github.com/PowerShell/PowerShell/releases/download/v${Env:PWSH_VERSION}/PowerShell-${Env:PWSH_VERSION}-win-x64.msi" -OutFile C:\Downloads\pwsh.msi -UseBasicParsing
+
+# Run the installer and remove it afterwards.
+SHELL ["cmd", "/S", "/C"]
+RUN msiexec.exe /package "C:\Downloads\pwsh.msi" /quiet REGISTER_MANIFEST=1 && `
+    rmdir /s /q "C:\Downloads"
+RUN pwsh --version
 
 # Add a powershell script, which will compile a flutter app mounted at C:\src.
 # The built app is copied to the folder build_container within the mounted folder.
