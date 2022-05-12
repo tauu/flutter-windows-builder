@@ -17,7 +17,7 @@ RUN `
     curl -SL --output vs_buildtools.exe https://aka.ms/vs/17/release/vs_buildtools.exe `
     `
     # Install Build Tools required for Native C++ Desktop Apps.
-    # The list of components and workloads has been adapted from 
+    # The list of components and workloads has been adapted from
     #   https://git.openprivacy.ca/openprivacy/flutter-desktop
     # Some components from their list was removed,
     # as they did not seem to be necessary.
@@ -68,6 +68,10 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 RUN New-Item -ItemType directory -Path C:\Downloads; `
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12; `
     Invoke-Webrequest "https://github.com/PowerShell/PowerShell/releases/download/v${Env:PWSH_VERSION}/PowerShell-${Env:PWSH_VERSION}-win-x64.msi" -OutFile C:\Downloads\pwsh.msi -UseBasicParsing
+
+# Install StoreBroker (https://github.com/microsoft/StoreBroker ) to enable
+# submitting apps to the windows store.
+RUN Install-Module -Name StoreBroker
 
 # Run the installer and remove it afterwards.
 SHELL ["cmd", "/S", "/C"]
