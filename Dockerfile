@@ -71,6 +71,7 @@ RUN New-Item -ItemType directory -Path C:\Downloads; `
 
 # Install StoreBroker (https://github.com/microsoft/StoreBroker ) to enable
 # submitting apps to the windows store.
+RUN Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 RUN Install-Module -Name StoreBroker
 
 # Run the installer and remove it afterwards.
