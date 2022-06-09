@@ -71,6 +71,8 @@ RUN New-Item -ItemType directory -Path C:\Downloads; `
 
 # Install StoreBroker (https://github.com/microsoft/StoreBroker ) to enable
 # submitting apps to the windows store.
+# NuGet is required for the package installation.
+RUN Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 RUN Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 RUN Install-Module -Name StoreBroker
 
