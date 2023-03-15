@@ -6,7 +6,7 @@
 FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
 # Defione the version of flutter, which will be installed in the container.
-ARG FLUTTER_VERSION=3.3.0
+ARG FLUTTER_VERSION=3.7.0
 ARG PWSH_VERSION=7.2.2
 
 # Restore the default Windows shell for correct batch processing.
