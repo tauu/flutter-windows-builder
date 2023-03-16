@@ -3,6 +3,7 @@ name: Check latest flutter tag
 on:
   schedule:
     - cron: "30 4 * * *"
+  workflow_dispatch:
 
 jobs:
 
