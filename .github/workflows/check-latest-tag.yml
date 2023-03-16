@@ -26,6 +26,6 @@ jobs:
             github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: `refs/tags/${{LAST_FLUTTER_TAG}}`,
+                ref: `refs/tags/${{env.LAST_FLUTTER_TAG}}`,
                 sha: context.sha
             })
