@@ -14,8 +14,8 @@ jobs:
     steps:
       - name: Check latest tags
         run: |
-          LAST_FLUTTER_TAG=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[] | select(. | endswith("pre") | not)' | tail -n 1)
-          LAST_IMAGE_TAG=$(curl -s https://api.github.com/repos/tauu/flutter-windows-builder/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[] | select(. | endswith("pre") | not)' | tail -n 1)
+          LAST_FLUTTER_TAG=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[] | select(. | endswith("pre") | not)' | tail -n 1 | tr -d '"')
+          LAST_IMAGE_TAG=$(curl -s https://api.github.com/repos/tauu/flutter-windows-builder/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[] | select(. | endswith("pre") | not)' | tail -n 1 | tr -d '"')
           echo "LAST_FLUTTER_TAG=$LAST_FLUTTER_TAG" >> $GITHUB_ENV
           echo "LAST_IMAGE_TAG=$LAST_IMAGE_TAG" >> $GITHUB_ENV
       - name: Create Tag
