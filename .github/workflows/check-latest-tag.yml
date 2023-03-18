@@ -41,3 +41,12 @@ jobs:
     secrets: inherit
     with:
       version: ${{needs.check_tags.outputs.latestFlutterTag}}
+
+  # Use the keepalive action to ensure the cron jobs will not be suspended after
+  # 90 days of inactivity.
+  keepalive:
+    name: Keepalive Commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: gautamkrishnar/keepalive-workflow@v1
