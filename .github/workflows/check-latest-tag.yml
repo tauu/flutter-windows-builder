@@ -35,7 +35,7 @@ jobs:
 
   # Build a docker image with this version, if it has not been build before.
   call_docker_image:
-    uses: ./github/workflows/docker-image.yml
+    uses: ./.github/workflows/docker-image.yml
     needs: check_tags
     if: ${{needs.check_tags.outputs.latestFlutterTag}} != ${{needs.check_tags.outputs.latestImageTag}}
     with:

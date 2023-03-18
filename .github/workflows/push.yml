@@ -14,10 +14,10 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: latest
-        uses: ./github/workflows/docker-image.yml
+        uses: ./.github/workflows/docker-image.yml
         if: ${{ github.ref_name == 'main' }}
       - name: tag
-        uses: ./github/workflows/docker-image.yml
+        uses: ./.github/workflows/docker-image.yml
         if: ${{ github.ref_type == 'tag' }}
         with:
           version: ${{github.ref_name}}
