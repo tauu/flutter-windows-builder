@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build_push_image:
+    runs-on: windows-2019
+    steps:
+      - name: latest
+        uses: ./github/workflows/docker-image.yml
+        if: ${{ github.ref_name == 'main' }}
+      - name: tag
+        uses: ./github/workflows/docker-image.yml
+        if: ${{ github.ref_type == 'tag' }}
+        with:
+          version: ${{github.ref_name}}

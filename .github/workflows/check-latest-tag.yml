@@ -7,25 +7,36 @@ on:
 
 jobs:
 
+  # Determine the version number of the latest stable flutter release.
   check_tags:
-
     runs-on: ubuntu-latest
-
+    outputs:
+      latestFlutterTag: ${{steps.latest-tags.outputs.FLUTTER}}
+      latestImageTag: ${{steps.latest-tags.outputs.IMAGE}}
     steps:
       - name: Check latest tags
+        id: latest-tags
         run: |
           LAST_FLUTTER_TAG=$(curl -s https://api.github.com/repos/flutter/flutter/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[] | select(. | endswith("pre") | not)' | tail -n 1 | tr -d '"')
           LAST_IMAGE_TAG=$(curl -s https://api.github.com/repos/tauu/flutter-windows-builder/git/refs/tags | jq 'map(.ref) | map(sub("refs/tags/"; "")) | .[] | select(. | endswith("pre") | not)' | tail -n 1 | tr -d '"')
-          echo "LAST_FLUTTER_TAG=$LAST_FLUTTER_TAG" >> $GITHUB_ENV
-          echo "LAST_IMAGE_TAG=$LAST_IMAGE_TAG" >> $GITHUB_ENV
+          echo "FLUTTER=$LAST_FLUTTER_TAG" >> $GITHUB_OUTPUT
+          echo "IMAGE=$LAST_IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Create Tag
         uses: actions/github-script@v6
-        if: ${{env.LAST_FLUTTER_TAG}} != ${{env.LAST_IMAGE_TAG}}
+        if: ${{steps.latest-tags.outputs.FLUTTER}} != ${{steps.latest-tags.outputs.IMAGE}}
         with:
           script: |
             github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: `refs/tags/${{env.LAST_FLUTTER_TAG}}`,
+                ref: `refs/tags/${{steps.latest-tags.outputs.FLUTTER}}`,
                 sha: context.sha
             })
+
+  # Build a docker image with this version, if it has not been build before.
+  call_docker_image:
+    uses: ./github/workflows/docker-image.yml
+    needs: check_tags
+    if: ${{needs.check_tags.outputs.latestFlutterTag}} != ${{needs.check_tags.outputs.latestImageTag}}
+    with:
+      version: ${{needs.check_tags.outputs.latestFlutterTag}}
