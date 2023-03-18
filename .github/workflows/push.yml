@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build Image On Push
 
 on:
   push:
@@ -10,14 +10,14 @@ on:
 
 jobs:
 
-  build_push_image:
-    runs-on: windows-2019
-    steps:
-      - name: latest
-        uses: ./.github/workflows/docker-image.yml
-        if: ${{ github.ref_name == 'main' }}
-      - name: tag
-        uses: ./.github/workflows/docker-image.yml
-        if: ${{ github.ref_type == 'tag' }}
-        with:
-          version: ${{github.ref_name}}
+  build_push_latest_image:
+    uses: ./.github/workflows/docker-image.yml
+    if: ${{ github.ref_name == 'main' }}
+    secrets: inherit
+
+  build_push_tag:
+    uses: ./.github/workflows/docker-image.yml
+    if: ${{ github.ref_type == 'tag' }}
+    secrets: inherit
+    with:
+      version: ${{github.ref_name}}
