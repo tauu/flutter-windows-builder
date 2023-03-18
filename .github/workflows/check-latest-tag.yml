@@ -23,7 +23,7 @@ jobs:
           echo "IMAGE=$LAST_IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Create Tag
         uses: actions/github-script@v6
-        if: ${{steps.latest-tags.outputs.FLUTTER}} != ${{steps.latest-tags.outputs.IMAGE}}
+        if: ${{steps.latest-tags.outputs.FLUTTER != steps.latest-tags.outputs.IMAGE}}
         with:
           script: |
             github.rest.git.createRef({
@@ -37,7 +37,7 @@ jobs:
   call_docker_image:
     uses: ./.github/workflows/docker-image.yml
     needs: check_tags
-    if: ${{needs.check_tags.outputs.latestFlutterTag}} != ${{needs.check_tags.outputs.latestImageTag}}
+    if: ${{needs.check_tags.outputs.latestFlutterTag != needs.check_tags.outputs.latestImageTag}}
     secrets: inherit
     with:
       version: ${{needs.check_tags.outputs.latestFlutterTag}}
