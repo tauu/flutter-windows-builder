@@ -14,26 +14,26 @@ jobs:
     runs-on: windows-2019
 
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v2
-      - name: Login to DockerHub
+      - name: login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Docker Build
+      - name: docker build latest
         if: ${{ inputs.version == '' }}
         run: |
                 docker build -f Dockerfile -t tauu/flutter-windows-builder:latest .
-      - name: Docker Build
+      - name: docker build version tag
         if: ${{ inputs.version != '' }}
         run: |
                 docker build -f Dockerfile --build-arg FLUTTER_VERSION=${{inputs.version}} -t tauu/flutter-windows-builder:${{inputs.version}} .
-      - name: Docker Push
+      - name: docker push latest
         if: ${{ inputs.version == '' }}
         run: |
                 docker push tauu/flutter-windows-builder:latest
-      - name: Docker Push
+      - name: docker push version tag
         if: ${{ inputs.version != '' }}
         run: |
                 docker push tauu/flutter-windows-builder:${{inputs.version}}
