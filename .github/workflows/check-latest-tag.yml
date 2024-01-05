@@ -41,6 +41,7 @@ jobs:
     secrets: inherit
     with:
       version: ${{needs.check_tags.outputs.latestFlutterTag}}
+      latest: true
 
   # Use the keepalive action to ensure the cron jobs will not be suspended after
   # 90 days of inactivity.

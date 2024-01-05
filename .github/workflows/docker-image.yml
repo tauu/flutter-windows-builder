@@ -6,6 +6,10 @@ on:
       version:
         type: string
         required: false
+      latest:
+        type: boolean
+        required: false
+        default: false
 
 jobs:
 
@@ -26,14 +30,14 @@ jobs:
         run: |
                 docker build -f Dockerfile -t tauu/flutter-windows-builder:latest .
       - name: docker build version tag
-        if: ${{ inputs.version != '' }}
+        if: ${{ inputs.version != '' && ! inputs.latest }}
         run: |
                 docker build -f Dockerfile --build-arg FLUTTER_VERSION=${{inputs.version}} -t tauu/flutter-windows-builder:${{inputs.version}} .
-      - name: docker push latest
-        if: ${{ inputs.version == '' }}
+      - name: docker build version and latest tag
+        if: ${{ inputs.version != '' && inputs.latest }}
         run: |
-                docker push tauu/flutter-windows-builder:latest
-      - name: docker push version tag
+                docker build -f Dockerfile --build-arg FLUTTER_VERSION=${{inputs.version}} -t tauu/flutter-windows-builder:${{inputs.version}} tauu/flutter-windows-builder:latest .
+      - name: docker push all tag
         if: ${{ inputs.version != '' }}
         run: |
-                docker push tauu/flutter-windows-builder:${{inputs.version}}
+                docker push -a tauu/flutter-windows-builder
