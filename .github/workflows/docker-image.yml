@@ -36,7 +36,7 @@ jobs:
       - name: docker build version and latest tag
         if: ${{ inputs.version != '' && inputs.latest }}
         run: |
-                docker build -f Dockerfile --build-arg FLUTTER_VERSION=${{inputs.version}} -t tauu/flutter-windows-builder:${{inputs.version}} tauu/flutter-windows-builder:latest .
+                docker build -f Dockerfile --build-arg FLUTTER_VERSION=${{inputs.version}} -t tauu/flutter-windows-builder:${{inputs.version}} -t tauu/flutter-windows-builder:latest .
       - name: docker push all tag
         if: ${{ inputs.version != '' }}
         run: |
